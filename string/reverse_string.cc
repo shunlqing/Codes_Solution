@@ -17,6 +17,8 @@ void reverse(string& str, int first, int last)
     }
 }
 
+//以单词为单位，做翻转
+// 如： “I am a struent” --> "student a am I"
 void reverseString(string& str) {
     if(str.size() == 0) {
         return;
@@ -37,9 +39,26 @@ void reverseString(string& str) {
 
 }
 
+//翻转指定位数
+// 如 “ABCDE”, 3 --> "DEABC"
+
+void reverseString(string& str, int size)
+{
+    if(str.size() == 0 || size > str.size())
+        return;
+    
+    reverse(str, 0, size-1);
+    reverse(str, size, str.size()-1);
+    reverse(str, 0, str.size() - 1);
+}
+ 
 int main()
 {
     string s = "long ba tian xia";
     reverseString(s);
+    
+    string s1 = "ABCDE";
+    reverseString(s1, 3);
     cout << s << endl;
+    cout << s1 << endl;
 }
