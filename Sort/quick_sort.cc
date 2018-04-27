@@ -1,28 +1,17 @@
 /**
  * File : quick_sort.cc
- * Brief : 快速排序 for vector
+ * Brief : 快速排序
 */
 
 /**
- * 快速排序思想： 分治法
- * 步骤：
- *  1. 分区函数：将给定区间分成两个区间
- *      1) 设置两个哨兵i,j
- *      2) 以首元素的值为基准数，
- *      3）左哨兵依次找大于等于基准数的元素，右哨兵依次向左找小于基准数的元素，两者找到一对，就交换
- *      4）左哨兵和右哨兵不断靠近，直到两者相遇。
- *      5) 交换首元素和j处的值
- *      6）返回js
- *  2. 递归
- *      1）分区，返回确定的j
- *      2）递归对左区间进行分区
- *      3）地柜对右区间进行分区
- * 
- * 算法复杂度： O(NlogN)
- *  第一层遍历N个元素，第二层递归虽然在两个区间，也是遍历N个元素；第三层也是遍历N个元素。。。。
- *  再来，第一层递归确定了1个元素的位置，第二层递归确定了2个元素的位置，第三层4个，第四层8个。。。。
- *  所以，显然是NlogN
- * 
+ * 最坏时间复杂度： O(n^2), 每次分区的枢纽都是当前区间中最小的
+ * 最好时间复杂度： O(nlogn),每次分区都能均匀的将区间分为两个
+ * 平均时间复杂度： O(nlogn)
+ * 空间复杂度：
+ *  快速排序在系统内部需要一个栈来实现递归。若每次划分较为均匀，则其递归树的高度为 O(lgn)，
+ *  故递归后需栈空间为 O(lgn)。最坏情况下，递归树的高度为 O(n)，所需的栈空间为 O(n)。
+ * 稳定性：
+ *  不稳定排序
 */
 
 #include <iostream>
@@ -30,48 +19,53 @@
 using namespace std;
 
 
-void exch(vector<int>& vec, int i, int j)
+int partition(int arr[], int low, int high)
 {
-    int tmp = vec[i];
-    vec[i] = vec[j];
-    vec[j] = tmp;
-}
-
-int partition(vector<int> &vec, int lo, int hi)
-{
-    int i = lo, j = hi + 1;
-    int v = vec[lo];
-    while(true) {
-        while(vec[++i] < v) {
-            if(i == hi)
-                break;
+    int i = low, j = high;
+    int pivot = arr[low];
+    int finalpos = low;
+    while(i < j) {
+        while(i < j && arr[j] >= pivot) {
+            j--;
         }
-        while(vec[--j] >= v) {
-            if(j == lo)
-                break;
+        if(i < j) {
+            finalpos = j; //此时若退出循环，则最终位置为j
+            arr[i++] = arr[j];
         }
-        if(i >= j)
-            break;
-        exch(vec, i, j);
+        while(i < j && arr[i] <= pivot) {
+            i++;
+        }
+        if(i < j) {
+            finalpos = i; //此时若退出循环，则最终位置为i
+            arr[j--] = arr[i];
+        }
     }
-    exch(vec, lo, j);
-    return j;
+    arr[finalpos] = pivot;
+    return finalpos;
 }
 
-void quick_sort(vector<int>& vec, int lo, int hi)
+void quickSortR(int arr[], int low, int high)
 {
-    if(lo >= hi) 
-        return;
-    int j = partition(vec, lo, hi);
-    quick_sort(vec, lo, j-1);
-    quick_sort(vec, j+1, hi);
+    if(low < high) {
+        int pivot = partition(arr, low, high);
+        quickSortR(arr, low, pivot-1);
+        quickSortR(arr, pivot + 1, high);
+    }
 }
+
+void quickSort(int arr[], int size)
+{
+    int low = 0, high = size - 1;
+        quickSortR(arr, low, high);
+}
+
+
 
 int main()
 {
-    vector<int> vec = {6,2,3,7,8,9,12,3,4,2};
-    quick_sort(vec, 0, vec.size()-1);
-    for(auto x : vec){
-        cout << x << " " << endl;
+    int arr[] = {6,2,3,7,8,9,12,3,4,2};
+    quickSort(arr, 10);
+    for(int i = 0; i < 10; i++) {
+        cout << arr[i] << " " ;
     }
 }
